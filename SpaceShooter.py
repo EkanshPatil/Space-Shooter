@@ -15,15 +15,6 @@ bombs = []
 score = 0
 ship.dead = False
 
-for i in range(2):
-    bomb = Actor("bomb")
-    bomb.pos = (random.randint(50,750),-50)
-    bombs.append(bomb)
-
-for i in range(5):
-    enemy = Actor("enemy")
-    enemy.pos = (random.randint(50,750),-50)
-    enemies.append(enemy)
 
 def countdown():
     global count
@@ -36,7 +27,10 @@ def on_key_down(key):
         if key == keys.SPACE:
             bullet = Actor("bullet")
             bullet.pos = (ship.x,ship.y - 30)
-            bullets.append(bullet)         
+            bullets.append(bullet)
+    if ship.dead and key == keys.R:
+        reset()
+        return         
 
 def update():
     global score
@@ -81,6 +75,27 @@ def update():
             ship.dead = True
             sounds.shot.play()
 
+#reset game
+def reset():
+    global score,bullets,enemies,bombs,count
+    score = 0
+    bullets.clear()
+    enemies.clear()
+    bombs.clear()
+    ship.pos = 400,350
+    ship.dead = False
+    for i in range(2):
+        bomb = Actor("bomb")
+        bomb.pos = (random.randint(50,750),-50)
+        bombs.append(bomb)
+
+    for i in range(5):
+        enemy = Actor("enemy")
+        enemy.pos = (random.randint(50,750),-50)
+        enemies.append(enemy)
+    count = 3
+    clock.schedule(countdown,1)
+
 def draw():
     screen.clear()
     screen.fill("midnightblue")
@@ -97,7 +112,7 @@ def draw():
             bomb.draw()
         screen.draw.text("score:{}".format(score),topleft=(20,30),color="yellow",fontsize=30)
     else:
-        screen.draw.text("GAME OVER\n final score:{}".format(score),center=(400,350),color="red",fontsize=80)
+        screen.draw.text("GAME OVER\n final score:{}\n PRESS 'R' to retry".format(score),center=(400,350),color="red",fontsize=80)
         bombs.clear()
         enemies.clear()
         bullets.clear()
